@@ -1,0 +1,6 @@
+/.idea
+/vendor
+/.php_cs.cache
+/.build/reports
+*.cache
+*.phar

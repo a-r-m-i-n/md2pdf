@@ -1,0 +1,97 @@
+{
+    "name": "armin/md2pdf",
+    "description": "Converts multiple markdown files to HTML and PDF.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Armin Vieweg",
+            "email": "info@v.ieweg.de",
+            "homepage": "https://v.ieweg.de"
+        }
+    ],
+    "homepage": "https://github.com/a-r-m-i-n/md2pdf",
+    "support": {
+        "issues": "https://github.com/a-r-m-i-n/md2pdf/issues",
+        "source": "https://github.com/a-r-m-i-n/md2pdf"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.3"
+        }
+    },
+    "require": {
+        "php": "^7.4 | ^8.0",
+        "ext-json": "*",
+        "ext-iconv": "*",
+        "symfony/console": "^5",
+        "symfony/finder": "^5",
+        "symfony/yaml": "^5",
+        "league/commonmark": "^2.0",
+        "mpdf/mpdf": "^8.0"
+    },
+    "require-dev": {
+        "armin/editorconfig-cli": "^1.5",
+        "seld/phar-utils": "^1.1",
+        "phpstan/phpstan": "^0.12.74",
+        "jangregor/phpstan-prophecy": "^0.8.1",
+        "friendsofphp/php-cs-fixer": "^3.0.3",
+        "phpunit/phpunit": "^9.5"
+    },
+    "bin": [
+        "bin/md2pdf"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Armin\\Md2Pdf\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Armin\\Md2Pdf\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "all": [
+            "@fix",
+            "@check",
+            "@test",
+            "@compile"
+        ],
+        "check": [
+            "@composer dump -o",
+            "@ec",
+            "@php-cs",
+            "@php-stan"
+        ],
+        "fix": [
+            "@composer dump -o",
+            "@ec-fix",
+            "@php-fix"
+        ],
+        "test": [
+            "@composer dump -o",
+            "@test-php-unit",
+            "@test-php-functional"
+        ],
+        "test-with-coverage": [
+            "@composer dump -o",
+            "@test-php-unit-coverage",
+            "@test-php-functional-coverage"
+        ],
+        "ec": "ec -n -g",
+        "ec-fix": "ec -n -g --fix",
+        "php-stan": "phpstan analyse -c .build/phpstan.neon",
+        "php-cs": "php-cs-fixer fix --config .build/php-cs-rules.php --ansi --verbose --diff --dry-run",
+        "php-fix": "php-cs-fixer fix --config .build/php-cs-rules.php --ansi",
+        "test-php-unit": "phpunit -c .build/phpunit-unit.xml --no-coverage",
+        "test-php-functional": "phpunit -c .build/phpunit-functional.xml --no-coverage",
+        "test-php-unit-coverage": "export XDEBUG_MODE=coverage && phpunit -c .build/phpunit-unit.xml --coverage-text",
+        "test-php-functional-coverage": "export XDEBUG_MODE=coverage && phpunit -c .build/phpunit-functional.xml --coverage-text",
+        "compile": [
+            "@composer dump -o --no-dev",
+            "Armin\\Md2Pdf\\Compiler::compile"
+        ]
+    }
+}
