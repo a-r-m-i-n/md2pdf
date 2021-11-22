@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 namespace Armin\Md2Pdf;
 
+use League\CommonMark\GithubFlavoredMarkdownConverter;
+use Mpdf\Mpdf;
 use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\SingleCommandApplication;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -19,6 +22,7 @@ class Application extends SingleCommandApplication
             ->setName($name)
             ->setVersion(self::getApplicationVersionFromComposerJson())
             ->setCode([$this, 'executing'])
+            ->addArgument('file', InputArgument::REQUIRED, 'File')
         ;
     }
 
@@ -26,7 +30,23 @@ class Application extends SingleCommandApplication
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->warning('Implement me!');
+        // TODO Prototype
+        $converter = new GithubFlavoredMarkdownConverter([
+            // options
+        ]);
+
+        $contents = file_get_contents($input->getArgument('file'));
+        $html = $converter->convertToHtml($contents);
+
+        $mpdf = new Mpdf([
+            'tempDir' => getcwd() . '/tmp',
+        ]);
+        $mpdf->WriteHTML($html);
+        $base = basename($input->getArgument('file'));
+        $mpdf->Output($base . '.pdf', \Mpdf\Output\Destination::FILE);
+
+        $io->success('Created pdf file ' . $base . '.pdf');
+        // TODO Prototype
 
         return 0;
     }

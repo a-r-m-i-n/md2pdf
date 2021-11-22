@@ -4,3 +4,4 @@
 /.build/reports
 *.cache
 *.phar
+*.pdf

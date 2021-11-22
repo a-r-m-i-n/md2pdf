@@ -19,16 +19,19 @@ class Compiler
      */
     public static function compile(): void
     {
+        echo 'Start compiling PHAR...' . PHP_EOL;
         if (file_exists(self::PHAR_FILE)) {
+            echo 'Removing existing file ' . self::PHAR_FILE . '...' . PHP_EOL;
             unlink(self::PHAR_FILE);
         }
         if (!empty(Application::getApplicationVersionFromComposerJson())) {
             $pharPath = self::BINARY_NAME . '-' . Application::getApplicationVersionFromComposerJson() . '.phar';
             if (file_exists($pharPath)) {
+                echo 'Removing existing file ' . $pharPath . '...' . PHP_EOL;
                 unlink($pharPath);
             }
         }
-
+        echo 'Creating new PHAR file...' . PHP_EOL;
         $phar = new \Phar(self::PHAR_FILE, 0, self::PHAR_FILE);
         $phar->setSignatureAlgorithm(\Phar::SHA1);
         $phar->startBuffering();
@@ -38,6 +41,7 @@ class Compiler
             return strcmp(str_replace('\\', '/', $a->getRealPath()), str_replace('\\', '/', $b->getRealPath()));
         };
 
+        echo 'Collecting project files...' . PHP_EOL;
         $finder = new Finder();
         $finder->files()
                ->ignoreVCS(true)
@@ -50,6 +54,7 @@ class Compiler
             self::addFile($phar, $file);
         }
 
+        echo 'Collecting vendor files...' . PHP_EOL;
         $finder = new Finder();
         $finder->files()
                ->ignoreVCS(true)
@@ -84,6 +89,28 @@ class Compiler
             self::addFile($phar, $file);
         }
 
+        echo 'Collecting asset files...' . PHP_EOL;
+        // Add required assets to PHAR
+        $finder = new Finder();
+        $finder->files()
+            ->ignoreVCS(true)
+            ->name('*')
+            ->in(__DIR__ . '/../vendor/mpdf/mpdf/data')
+            ->sort($finderSort);
+        foreach ($finder as $file) {
+            self::addFile($phar, $file);
+        }
+        $finder = new Finder();
+        $finder->files()
+            ->ignoreVCS(true)
+            ->name('DejaVuSerif*.ttf')
+            ->in(__DIR__ . '/../vendor/mpdf/mpdf/ttfonts')
+            ->sort($finderSort);
+        foreach ($finder as $file) {
+            self::addFile($phar, $file);
+        }
+
+        echo 'Add autoloader and binaries...' . PHP_EOL;
         // More files to add
         self::addComposerAutoloader($phar);
         self::addBinary($phar);
@@ -92,16 +119,19 @@ class Compiler
         $phar->setStub(self::getStub());
         $phar->stopBuffering();
 
+        echo 'Add LICENSE and composer.json...' . PHP_EOL;
         // disabled for interoperability with systems without gzip ext
         // $phar->compressFiles(\Phar::GZ);
         self::addFile($phar, new \SplFileInfo(__DIR__ . '/../LICENSE'), false);
         self::addFile($phar, new \SplFileInfo(__DIR__ . '/../composer.json'), false);
         unset($phar);
 
+        echo 'Updating timestamps...' . PHP_EOL;
         // re-sign the phar with reproducible timestamp / signature
         $util = new Timestamps(self::PHAR_FILE);
         $util->updateTimestamps((new \DateTime())->getTimestamp());
 
+        echo 'Saving...' . PHP_EOL;
         $util->save(self::PHAR_FILE, \Phar::SHA1);
 
         $pharPath = self::PHAR_FILE;
@@ -112,7 +142,7 @@ class Compiler
                 throw new \RuntimeException(sprintf('Unable to rename %s to %s', self::PHAR_FILE, $pharPath));
             }
         }
-        echo 'Saved: ' . $pharPath . PHP_EOL;
+        echo 'Saved: ' . $pharPath . ' (' . round(filesize($pharPath) / 1024 / 1024, 2) . ' MB)' . PHP_EOL;
     }
 
     private static function addFile(\Phar $phar, \SplFileInfo $file, bool $strip = true): void
@@ -174,9 +204,14 @@ class Compiler
             '__HALT_COMPILER();';
     }
 
+    private static function isBinary($str): bool
+    {
+        return preg_match('~[^\x20-\x7E\t\r\n]~', $str) > 0;
+    }
+
     private static function stripWhitespace(string $source): string
     {
-        if (!\function_exists('token_get_all')) {
+        if (!\function_exists('token_get_all') || self::isBinary($source)) {
             return $source;
         }
         $output = '';
