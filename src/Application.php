@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\SingleCommandApplication;
-use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Application extends SingleCommandApplication
@@ -87,7 +86,7 @@ class Application extends SingleCommandApplication
         return self::INVALID; // should never get reached
     }
 
-    public function init(OutputStyle $io): int
+    public function init(SymfonyStyle $io): int
     {
         // Check for existing yaml
         $configManager = new ConfigManager($this->configPath);
@@ -100,19 +99,19 @@ class Application extends SingleCommandApplication
         return self::SUCCESS;
     }
 
-    public function check(OutputStyle $io): int
+    public function check(SymfonyStyle $io): int
     {
         // TODO
         return self::SUCCESS;
     }
 
-    public function update(OutputStyle $io): int
+    public function update(SymfonyStyle $io): int
     {
         // TODO
         return self::SUCCESS;
     }
 
-    public function build(OutputStyle $io): int
+    public function build(SymfonyStyle $io): int
     {
         $configManager = new ConfigManager($this->configPath);
 
