@@ -27,6 +27,7 @@
         "ext-iconv": "*",
         "symfony/console": "^5",
         "symfony/finder": "^5",
+        "symfony/options-resolver": "^5",
         "symfony/yaml": "^5",
         "league/commonmark": "^2.0",
         "mpdf/mpdf": "^8.0"
@@ -68,7 +69,8 @@
         "fix": [
             "@composer dump -o",
             "@ec-fix",
-            "@php-fix"
+            "@php-fix",
+            "@php-stan"
         ],
         "test": [
             "@composer dump -o",

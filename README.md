@@ -2,4 +2,6 @@
 
 Converts multiple markdown files to HTML and PDF.
 
-tbw;
+## Documentation
+
+Checkout the [Documentation](docs/index.md)

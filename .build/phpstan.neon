@@ -8,3 +8,4 @@ parameters:
     excludePaths:
         - ../src/Compiler.php
     checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false

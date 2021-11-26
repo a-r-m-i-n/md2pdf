@@ -104,6 +104,7 @@ class Compiler
         $finder->files()
             ->ignoreVCS(true)
             ->name('DejaVuSerif*.ttf')
+            ->name('DejaVuSans*.ttf')
             ->in(__DIR__ . '/../vendor/mpdf/mpdf/ttfonts')
             ->sort($finderSort);
         foreach ($finder as $file) {

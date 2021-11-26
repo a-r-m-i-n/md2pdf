@@ -1,0 +1,58 @@
+title: Test Document
+author: Armin Vieweg
+baseUrl: https://github.com/a-r-m-i-n/md2pdf/blob/master
+rootPath: .
+structure:
+  - section: README Contents
+    level: 1
+  - README.md
+  - section: Dokumentation
+    level: 1
+  - docs/index.md
+  - docs/configuration.md
+
+styles: |
+  .title {
+    font-size: 50px;
+    text-align: center;
+    padding: 100px 0 30px;
+  }
+  .author {
+    font-size: 30px;
+    text-align: center;
+  }
+  body, a.mpdf_toc_a {
+    color: #222;
+  }
+
+  .file-break {
+    page-break-after: always;
+  }
+
+  .footer {
+    font-size: 0.8rem;
+    border-top: 1px solid #444;
+    padding-top: 5px;
+    color: #444;
+  }
+
+  div.mpdf_toc_level_3 {
+    margin-left: 6em;
+    text-indent: -2em;
+    padding-right: 0em;
+  }
+
+  div.mpdf_toc_level_4 {
+    margin-left: 8em;
+    text-indent: -2em;
+    padding-right: 0em;
+  }
+
+  div.mpdf_toc_level_5 {
+    margin-left: 10em;
+    text-indent: -2em;
+    padding-right: 0em;
+  }
+
+
+output: test.pdf
