@@ -19,6 +19,22 @@ The following modes are available:
 - ``build`` Builds the actual HTML/PDF file
 
 
-### Another cool headline
+## md2pdf.yaml file
 
-Just for testing
+Example:
+
+```yaml
+title: Test Document
+author: Armin Vieweg
+baseUrl: https://github.com/a-r-m-i-n/md2pdf/blob/master
+structure:
+  - section: README Contents
+    level: 1
+  - README.md
+  - section: Dokumentation
+    level: 1
+  - docs/index.md
+  - docs/configuration.md
+
+output: test.pdf
+```

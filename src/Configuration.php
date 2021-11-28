@@ -24,12 +24,15 @@ class Configuration implements \ArrayAccess
             'rootPath' => '.',
             'baseUrl' => '',
             'title' => '',
+            'subtitle' => '',
             'author' => '',
             'styles' => '',
             'enableFooter' => true,
             'enableToc' => true,
             'tocHeadline' => 'Contents',
             'pageLabel' => 'Page',
+            'syntaxHighlightingTheme' => 'vs',
+            'autoLanguages' => ['yaml', 'html', 'css', 'js', 'php', 'md', 'txt'],
         ]);
         $resolver->setRequired('title')->setAllowedTypes('title', 'string');
         $resolver->setRequired('structure')->setAllowedTypes('structure', 'array'); // TODO: Check for possible child options

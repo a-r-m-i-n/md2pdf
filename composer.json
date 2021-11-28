@@ -30,7 +30,8 @@
         "symfony/options-resolver": "^5",
         "symfony/yaml": "^5",
         "league/commonmark": "^2.0",
-        "mpdf/mpdf": "^8.0"
+        "mpdf/mpdf": "^8.0",
+        "scrivo/highlight.php": "^9.18"
     },
     "require-dev": {
         "armin/editorconfig-cli": "^1.5",

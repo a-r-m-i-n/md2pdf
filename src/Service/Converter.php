@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Armin\Md2Pdf\Service;
 
 use Armin\Md2Pdf\Configuration;
+use Highlight\Highlighter;
+use function HighlightUtilities\getStyleSheet;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use League\CommonMark\Normalizer\SlugNormalizer;
 use Mpdf\Mpdf;
@@ -50,10 +52,88 @@ class Converter
             'H6' => 5,
         ];
         $mpdf->AddPage('', '', '', '', 'on');
-        $mpdf->WriteHTML('<style>' . $this->configuration['styles'] . '</style>');
-        $mpdf->SetTitle($this->configuration['title']);
 
-        $mpdf->WriteHTML('<div class="title">' . $this->configuration['title'] . '</div><div class="author">' . $this->configuration['author'] . '</div>');
+        $css = <<<CSS
+              .title {
+                font-size: 50px;
+                text-align: center;
+                padding: 100px 0 30px;
+              }
+              .subtitle {
+                font-size: 30px;
+                text-align: center;
+                padding: 0 0 50px;
+              }
+              .author {
+                font-size: 22px;
+                text-align: center;
+              }
+
+              .file-break {
+                page-break-after: always;
+              }
+
+              .footer {
+                font-size: 0.8rem;
+                border-top: 1px solid #444;
+                padding-top: 5px;
+              }
+
+              h1 {
+                font-size: 30px;
+              }
+              h2 {
+                font-size: 27px;
+              }
+              h3 {
+                font-size: 23px;
+              }
+              h4 {
+                font-size: 20px;
+              }
+              h5 {
+                font-size: 17px;
+              }
+              h6 {
+                font-size: 15px;
+              }
+
+              pre, code { font-size: 0.9em; }
+
+              div.mpdf_toc_level_3 {
+                margin-left: 6em;
+                text-indent: -2em;
+                padding-right: 0em;
+              }
+
+              div.mpdf_toc_level_4 {
+                margin-left: 8em;
+                text-indent: -2em;
+                padding-right: 0em;
+              }
+
+              div.mpdf_toc_level_5 {
+                margin-left: 10em;
+                text-indent: -2em;
+                padding-right: 0em;
+              }
+            CSS;
+
+        $mpdf->WriteHTML('<style>' . $css . '</style>');
+
+        $mpdf->WriteHTML('<style>' . $this->configuration['styles'] . '</style>');
+
+        if (!empty($this->configuration['title'])) {
+            $mpdf->SetTitle($this->configuration['title']);
+            $mpdf->WriteHTML('<div class="title">' . $this->configuration['title'] . '</div>');
+        }
+        if (!empty($this->configuration['subtitle'])) {
+            $mpdf->WriteHTML('<div class="subtitle">' . $this->configuration['subtitle'] . '</div>');
+        }
+        if (!empty($this->configuration['author'])) {
+            $mpdf->WriteHTML('<div class="author">' . $this->configuration['author'] . '</div>');
+        }
+
         if ($this->configuration['enableToc']) {
             $io->writeln('<comment>Adding TOC with headline "' . $this->configuration['tocHeadline'] . '"</comment>', SymfonyStyle::VERBOSITY_VERBOSE);
             $mpdf->TOCpagebreak('', '', '', true, true, '', '', '', '', '30', '', '', '', '', '', '', '', '', '', '', '<h1>' . $this->configuration['tocHeadline'] . '</h1>', '', '', '1', '1', 'off');
@@ -61,7 +141,7 @@ class Converter
 
         if ($this->configuration['enableFooter']) {
             $mpdf->SetHTMLFooter(
-                '<table class="footer" style="width: 100%;"><tr><td>' . $this->configuration['title'] . '</td><td style="text-align: right;">Page {PAGENO}</td></tr></table>'
+                '<table class="footer" style="width: 100%;"><tr><td>' . $this->configuration['title'] . '</td><td style="text-align: right;">' . $this->configuration['pageLabel'] . ' {PAGENO}</td></tr></table>'
             );
         }
 
@@ -70,7 +150,7 @@ class Converter
         $htmlParts = [];
         $lastSectionLevel = 0;
         $io->writeln('Reading markdown files from configured structure...');
-        $io->writeln('<comment>Found ' . count($this->configuration['structure']) . '" entries in document\'s structure.</comment>', SymfonyStyle::VERBOSITY_VERBOSE);
+        $io->writeln('<comment>Found ' . count($this->configuration['structure']) . ' entries in document\'s structure.</comment>', SymfonyStyle::VERBOSITY_VERBOSE);
 
         $io->progressStart(count($this->configuration['structure']));
         foreach ($this->configuration['structure'] as $item) {
@@ -203,11 +283,41 @@ class Converter
             }
         }
 
-        // TODO: Syntax highlighting
+        // Apply Syntax highlighting
+        $highlighter = new Highlighter();
+        $style = getStyleSheet($this->configuration['syntaxHighlightingTheme']);
+        $mpdf->WriteHTML('<style>' . $style . '</style>');
 
-        // Output
+        preg_match_all('/<pre><code(.*?)>(.*?)<\/code><\/pre>/is', $fullHtml, $matches);
+        foreach ($matches[0] as $index => $linkTags) {
+            $attr = $matches[1][$index];
+            $language = null;
+            if (!empty($attr) && false !== strpos($attr, 'class') && false !== strpos($attr, 'language-')) {
+                $language = (string)preg_replace('/.*language-(\w*?)[\W].*/i', '$1', $attr);
+            }
+            $code = $matches[2][$index];
+            if ($language) {
+                $highlightedCode = $highlighter->highlight($language, $code);
+            } else {
+                $highlightedCode = $highlighter->highlightAuto($code, $this->configuration['autoLanguages']);
+            }
+
+            if ($code !== $highlightedCode->value) {
+                $fullHtml = str_replace($code, html_entity_decode($highlightedCode->value), $fullHtml);
+                if ($language) {
+                    $fullHtml = str_replace($attr, ' class="hljs ' . $highlightedCode->language . '"', $fullHtml);
+                } else {
+                    $fullHtml = str_replace($attr, ' class="hljs"', $fullHtml);
+                }
+            }
+        }
+
+        // TODO: Output HTML
+
+        // Output PDF
         $io->writeln('Creating PDF...', SymfonyStyle::VERBOSITY_VERBOSE);
         $mpdf->WriteHTML($fullHtml);
+
         $output = $rootPath . DIRECTORY_SEPARATOR . $this->configuration['output'];
         $io->writeln('Writing PDF to <info>' . $output . '"</info>...');
         $mpdf->Output($output, \Mpdf\Output\Destination::FILE);

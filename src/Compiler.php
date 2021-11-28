@@ -84,6 +84,7 @@ class Compiler
                ->in(__DIR__ . '/../vendor/symfony/yaml')
                ->in(__DIR__ . '/../vendor/psr/')
                ->in(__DIR__ . '/../vendor/setasign/')
+               ->in(__DIR__ . '/../vendor/scrivo/highlight.php')
                ->sort($finderSort);
         foreach ($finder as $file) {
             self::addFile($phar, $file);
@@ -96,6 +97,7 @@ class Compiler
             ->ignoreVCS(true)
             ->name('*')
             ->in(__DIR__ . '/../vendor/mpdf/mpdf/data')
+            ->in(__DIR__ . '/../vendor/scrivo/highlight.php/styles')
             ->sort($finderSort);
         foreach ($finder as $file) {
             self::addFile($phar, $file);
