@@ -55,24 +55,33 @@ class Application extends SingleCommandApplication
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $this->workingDirectory = realpath($input->getOption('dir')) ?: '';
-        $this->configPath = $this->workingDirectory . DIRECTORY_SEPARATOR . $input->getOption('config');
+        /** @var string $dir */
+        $dir = $input->getOption('dir');
+        $this->workingDirectory = realpath($dir) ?: '';
+
+        /** @var string $config */
+        $config = $input->getOption('config');
+        $this->configPath = $this->workingDirectory . DIRECTORY_SEPARATOR . $config;
     }
 
     protected function executing(Input $input, Output $output): int
     {
-        if (empty($input->getArgument('mode')) || !in_array($mode = strtolower($input->getArgument('mode')), $this->modes, true)) {
-            throw new \RuntimeException(sprintf('Given mode "%s" unknown. Available modes are: %s', $mode ?? '', implode(', ', $this->modes)));
+        /** @var string $mode */
+        $mode = $input->getArgument('mode');
+        $mode = strtolower($mode);
+
+        if (empty($mode) || !in_array($mode, $this->modes, true)) {
+            throw new \RuntimeException(sprintf('Given mode "%s" unknown. Available modes are: %s', $mode, implode(', ', $this->modes)));
         }
 
         $io = new SymfonyStyle($input, $output);
 
         $io->title('md2pdf v' . self::getApplicationVersionFromComposerJson());
         $io->writeln('Using configuration file: <info>' . $this->configPath . '</info>');
-        $io->writeln(sprintf('<comment>Mode running: %s</comment>', (string)$input->getArgument('mode')), OutputInterface::VERBOSITY_VERBOSE);
+        $io->writeln(sprintf('<comment>Mode running: %s</comment>', $mode), OutputInterface::VERBOSITY_VERBOSE);
 
         // Dispatching mode
-        switch ($input->getArgument('mode')) {
+        switch ($mode) {
             case self::MODE_INIT:
                 return $this->init($io);
             case self::MODE_CHECK:
