@@ -83,7 +83,7 @@ class Application extends SingleCommandApplication
                 return $this->build($io);
         }
 
-        return self::INVALID; // should never get reached
+        return self::FAILURE; // should never get reached
     }
 
     public function init(SymfonyStyle $io): int
