@@ -36,8 +36,8 @@
     "require-dev": {
         "armin/editorconfig-cli": "^1.5",
         "seld/phar-utils": "^1.1",
-        "phpstan/phpstan": "^0.12.74",
-        "jangregor/phpstan-prophecy": "^0.8.1",
+        "phpstan/phpstan": "^1.2",
+        "jangregor/phpstan-prophecy": "^1.0",
         "friendsofphp/php-cs-fixer": "^3.0.3",
         "phpunit/phpunit": "^9.5"
     },
