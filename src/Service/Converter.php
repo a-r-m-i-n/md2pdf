@@ -157,7 +157,9 @@ class Converter
             if (is_array($item)) {
                 if (array_key_exists('section', $item)) {
                     $lastSectionLevel = $item['level'] ?? 1;
+                    $htmlParts[] = sprintf('<bookmark content="%s" level="%d" />', $item['section'], $lastSectionLevel - 1);
                     $htmlParts[] = '<h' . $lastSectionLevel . '>' . $item['section'] . '</h' . $lastSectionLevel . '>';
+
                     if (isset($item['contents']) && !empty($item['contents'])) {
                         $htmlParts[] = '<div class="section-contents">' . $item['contents'] . '</div>';
                     }
@@ -187,12 +189,14 @@ class Converter
                     $html = $fileAnchor . $html;
 
                     // Provide extended anchors (incl. filename)
-                    preg_match_all('/(<h\d>)(.*?)(<\/h\d>)/i', $html, $matches);
+                    preg_match_all('/<h(\d)>(.*?)(<\/h\d>)/i', $html, $matches);
                     foreach ($matches[0] as $subIndex => $headline) {
                         $text = $matches[2][$subIndex];
+                        $level = (int)$matches[1][$subIndex];
                         $normalizedText = $slugNormalizer->normalize($text, ['prefix' => $item . '-']);
                         if (!empty($normalizedText)) {
                             $createdAnchors[$item . '#' . $normalizedText] = $normalizedText;
+                            $bookmark = sprintf('<bookmark level="%d" content="%s" />', $level, $text) . PHP_EOL;
                             $anchors = '<a name="' . $normalizedText . '"></a>' . PHP_EOL . '<a name="' . $slugNormalizer->normalize($text) . '"></a>' . PHP_EOL;
                             $itemParts = explode('/', $item);
                             if (count($itemParts) > 1) {
@@ -206,7 +210,7 @@ class Converter
                                 }
                             }
 
-                            $html = str_replace($headline, $anchors . $headline, $html);
+                            $html = str_replace($headline, $bookmark . $anchors . $headline, $html);
                         }
                     }
 
@@ -214,17 +218,22 @@ class Converter
                     if ($lastSectionLevel > 0) {
                         if ($lastSectionLevel + 5 <= 6) {
                             $html = str_replace('h5>', 'h' . ($lastSectionLevel + 5) . '>', $html);
+                            $html = str_replace('<bookmark level="5"', '<bookmark level="' . ($lastSectionLevel + 4) . '"', $html);
                         }
                         if ($lastSectionLevel + 4 <= 6) {
                             $html = str_replace('h4>', 'h' . ($lastSectionLevel + 4) . '>', $html);
+                            $html = str_replace('<bookmark level="4"', '<bookmark level="' . ($lastSectionLevel + 3) . '"', $html);
                         }
                         if ($lastSectionLevel + 3 <= 6) {
                             $html = str_replace('h3>', 'h' . ($lastSectionLevel + 3) . '>', $html);
+                            $html = str_replace('<bookmark level="3"', '<bookmark level="' . ($lastSectionLevel + 2) . '"', $html);
                         }
                         if ($lastSectionLevel + 2 <= 6) {
                             $html = str_replace('h2>', 'h' . ($lastSectionLevel + 2) . '>', $html);
+                            $html = str_replace('<bookmark level="2"', '<bookmark level="' . ($lastSectionLevel + 1) . '"', $html);
                         }
                         $html = str_replace('h1>', 'h' . ($lastSectionLevel + 1) . '>', $html);
+                        $html = str_replace('<bookmark level="1"', '<bookmark level="' . ($lastSectionLevel) . '"', $html);
                     }
 
                     // Convert relative file links
