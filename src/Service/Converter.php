@@ -69,10 +69,6 @@ class Converter
                 text-align: center;
               }
 
-              .file-break {
-                page-break-after: always;
-              }
-
               .footer {
                 font-size: 0.8rem;
                 border-top: 1px solid #444;
@@ -256,7 +252,7 @@ class Converter
                         $html = str_replace($src, $path, $html);
                     }
 
-                    $htmlParts[] = '<div class="file-break file-contents">' . $html . '</div>';
+                    $htmlParts[] = '<div class="file-contents">' . $html . '</div><pagebreak />';
                 } else {
                     $io->warning('Missing file "' . $item . '"!');
                 }
@@ -320,6 +316,10 @@ class Converter
                 }
             }
         }
+
+        $fullHtml = str_replace('<!-- PAGEBREAK -->', '<pagebreak />', $fullHtml);
+        $fullHtml = str_replace('<!-- PAGEBREAK:L -->', '<pagebreak orientation="landscape" />', $fullHtml);
+        $fullHtml = str_replace('<!-- PAGEBREAK:P -->', '<pagebreak orientation="portrait" />', $fullHtml);
 
         // TODO: Output HTML
 

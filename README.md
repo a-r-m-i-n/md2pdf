@@ -80,6 +80,7 @@ Currently, the build mode is the only implemented one.
   - You can also pass additional formatted texts, using the ``contents`` sub-key, which accepts markdown formatted input
 - Syntax highlighting for embedded code (configurable, using [scrivo/highlight.php](https://github.com/scrivo/highlight.php))
 - Configurable styles
+- Manual page-breaks and orientation changes possible (```<!-- PAGEBREAK --> <!-- PAGEBREAK:L --> <!-- PAGEBREAK:P -->```)
 - Output converted markdown contents (via HTML) to PDF (using [mpdf/mpdf](https://mpdf.github.io/))
 - Phar compiler
   - because of filesize reasons, only the TTF fonts "DejaVuSerif" and "DejaVuSans" are included to phar binary
