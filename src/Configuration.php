@@ -52,6 +52,7 @@ class Configuration implements \ArrayAccess
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->options[$offset] ?? null;

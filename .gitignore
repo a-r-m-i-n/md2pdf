@@ -2,6 +2,7 @@
 /vendor
 /.php_cs.cache
 /.build/reports
+/tmp
 *.cache
 *.phar
 *.pdf

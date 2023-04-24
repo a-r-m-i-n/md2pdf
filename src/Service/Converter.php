@@ -6,7 +6,9 @@ namespace Armin\Md2Pdf\Service;
 
 use Armin\Md2Pdf\Configuration;
 use Highlight\Highlighter;
+
 use function HighlightUtilities\getStyleSheet;
+
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use League\CommonMark\Normalizer\SlugNormalizer;
 use Mpdf\Mpdf;
@@ -278,7 +280,7 @@ class Converter
         // Replace converted relative links
         preg_match_all('/<a.*?href="(.*?)".*?>(.*?)<\/a>/i', $fullHtml, $matches);
         foreach ($matches[0] as $index => $linkTags) {
-            $href = $matches[1][$index];
+            $href = (string)$matches[1][$index];
             if (false !== strpos($href, '://') || 0 === strpos($href, '#')) {
                 continue; // skip any external links
             }
