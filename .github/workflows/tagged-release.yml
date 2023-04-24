@@ -44,9 +44,8 @@ jobs:
 
         - name: Test PHAR
           run: |
-              chmod +x ec-${{ steps.get_version.outputs.version }}.phar
-              ./ec-${{ steps.get_version.outputs.version }}.phar --help
-              ./ec-${{ steps.get_version.outputs.version }}.phar
+              chmod +x md2pdf-${{ steps.get_version.outputs.version }}.phar
+              ./md2pdf-${{ steps.get_version.outputs.version }}.phar --help
 
         - uses: "marvinpinto/action-automatic-releases@latest"
           with:
