@@ -49,18 +49,15 @@ class Configuration implements \ArrayAccess
 
     /**
      * @param string $offset
-     *
-     * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->options[$offset] ?? null;
     }
 
     /**
      * @param string $offset
-     * @param mixed  $value
      */
     public function offsetSet($offset, $value): void
     {
