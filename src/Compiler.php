@@ -69,22 +69,10 @@ class Compiler
                ->in(__DIR__ . '/../vendor/myclabs')
                ->in(__DIR__ . '/../vendor/nette')
                ->in(__DIR__ . '/../vendor/paragonie')
-               ->in(__DIR__ . '/../vendor/symfony/console')
-               ->in(__DIR__ . '/../vendor/symfony/deprecation-contracts')
-               ->in(__DIR__ . '/../vendor/symfony/event-dispatcher')
-               ->in(__DIR__ . '/../vendor/symfony/event-dispatcher-contracts')
-               ->in(__DIR__ . '/../vendor/symfony/filesystem')
-               ->in(__DIR__ . '/../vendor/symfony/finder')
-               ->in(__DIR__ . '/../vendor/symfony/options-resolver')
-               ->in(__DIR__ . '/../vendor/symfony/polyfill-*')
-               ->in(__DIR__ . '/../vendor/symfony/process')
-               ->in(__DIR__ . '/../vendor/symfony/service-contracts')
-               ->in(__DIR__ . '/../vendor/symfony/stopwatch')
-               ->in(__DIR__ . '/../vendor/symfony/string')
-               ->in(__DIR__ . '/../vendor/symfony/yaml')
                ->in(__DIR__ . '/../vendor/psr/')
-               ->in(__DIR__ . '/../vendor/setasign/')
-               ->in(__DIR__ . '/../vendor/scrivo/highlight.php')
+               ->in(__DIR__ . '/../vendor/scrivo')
+               ->in(__DIR__ . '/../vendor/setasign')
+               ->in(__DIR__ . '/../vendor/symfony')
                ->sort($finderSort);
         foreach ($finder as $file) {
             self::addFile($phar, $file);
@@ -98,6 +86,7 @@ class Compiler
             ->name('*')
             ->in(__DIR__ . '/../vendor/mpdf/mpdf/data')
             ->in(__DIR__ . '/../vendor/scrivo/highlight.php/styles')
+            ->in(__DIR__ . '/../vendor/symfony/console/Resources')
             ->sort($finderSort);
         foreach ($finder as $file) {
             self::addFile($phar, $file);
