@@ -2,7 +2,7 @@
     "name": "armin/md2pdf",
     "description": "Converts multiple markdown files to HTML and PDF.",
     "type": "library",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "license": "MIT",
     "authors": [
         {
