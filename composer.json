@@ -2,7 +2,7 @@
     "name": "armin/md2pdf",
     "description": "Converts multiple markdown files to HTML and PDF.",
     "type": "library",
-    "version": "0.2.1",
+    "version": "0.3.0-dev",
     "license": "MIT",
     "authors": [
         {
@@ -25,10 +25,10 @@
         "php": "^8.1",
         "ext-json": "*",
         "ext-iconv": "*",
-        "symfony/console": "^5.4 || ^6.2",
-        "symfony/finder": "^5.4 || ^6.2",
-        "symfony/options-resolver": "^5.4 || ^6.2",
-        "symfony/yaml": "^5.4 || ^6.2",
+        "symfony/console": "^5.4 || ^6.2 || ^7.1",
+        "symfony/finder": "^5.4 || ^6.2 || ^7.1",
+        "symfony/options-resolver": "^5.4 || ^6.2 || ^7.1",
+        "symfony/yaml": "^5.4 || ^6.2 || ^7.1",
         "league/commonmark": "^2.0",
         "mpdf/mpdf": "^8.1",
         "scrivo/highlight.php": "^9.18"
